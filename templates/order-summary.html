@@ -1,0 +1,134 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Material Design Bootstrap</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+  <style type="text/css">
+    html,
+    body,
+    header,
+    .carousel {
+      height: 60vh;
+    }
+
+    @media (max-width: 740px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="mt-5 pt-4">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Item Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if order %}
+          {% for order_item in order.order_itens.all %}
+          <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ order_item.item.title }}</td>
+              <td>{{ order_item.item.price }}</td>
+              <td>
+                  <a href="{% url 'remove-from-cart' order_item.item.slug %}"><i class="fas fa-minus mr-2"></i></a>
+                  {{ order_item.quantity }}
+                  <a href="{% url 'add-to-cart' order_item.item.slug %}"><i class="fas fa-plus ml-2"></i></a>
+              </td>
+              <td>{{ order_item.get_item_total_price }}</td>
+              <td>
+              <a style='color: red;' href="{% url 'remove-cart' order_item.item.slug %}">
+                  <i class="fas fa-trash float-right"></i>
+              </a>
+              </td>
+              {% empty %}
+              <tr>
+                  <td colspan='5'><center>Your cart is empty</center></td>
+              </tr>
+          </tr>
+          {% endfor %}
+
+          {% if order.order_itens.all %}
+          <tr>
+              <td colspan="4"><b>Order Total</b></td>
+              <td><b>{{ order.get_order_total_price }}R$</b></td>
+          </tr>
+          <tr>
+              <td colspan="5">
+              <a class='btn btn-warning float-right ml-2' href=''>Proceed to checkout</a>
+              <a class='btn btn-primary float-right' href=''>Continue shopping</a>
+              </td>
+          </tr>
+          {% endif %}
+        {% else %}
+        <tr>
+          <td colspan='5'><center>Your cart is empty</center></td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+  {% include 'footer.html' %}
+</body>
+</html>
